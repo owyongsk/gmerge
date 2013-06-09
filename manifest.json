@@ -1,0 +1,36 @@
+{
+  "name": "Gmerge",
+  "version": "0.1",
+  "description": "An extension that lets you Mail Merge on Gmail itself",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://mail.google.com/*"
+      ],
+      "js": [
+        "lib/yepnope.js/yepnope.1.5.4-min.js",
+        "lib/bootstrap.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "tabs",
+    "*://mail.google.com/*"
+  ],
+	"icons": {
+		"16": "assets/icon_016.png",
+		"48": "assets/icon_048.png",
+		"128": "assets/icon_128.png"
+	},
+  "manifest_version" : 2,
+  "web_accessible_resources" : [
+    "lib/gmailr.js",
+    "lib/jquery-bbq/jquery.ba-bbq.min.js",
+		"lib/underscore-min.js",
+		"lib/gmailui.js",
+    "main.js"
+  ]
+}
+
+        
