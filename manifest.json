@@ -1,6 +1,6 @@
 {
-  "name": "Gmerge",
-  "version": "0.1",
+  "name": "Gmerge Alpha",
+  "version": "0.1.1",
   "description": "An extension that lets you Mail Merge on Gmail itself",
   "content_scripts": [
     {
@@ -15,7 +15,6 @@
     }
   ],
   "permissions": [
-    "tabs",
     "*://mail.google.com/*"
   ],
 	"icons": {

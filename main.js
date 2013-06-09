@@ -2,6 +2,10 @@ Gmailr.debug = true; // Turn verbose debugging messages on
 
 
 Gmailr.init(function(G) {
+	$(document).bind('DOMNodeInserted', function(e) {
+		if (e.target == $("[role='textbox']").last()[0])
+			insertMergeButton();
+	});
 
 	var url = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
 	var newAuth = function() {
@@ -80,7 +84,6 @@ Gmailr.init(function(G) {
 	G.observe(Gmailr.EVENT_DRAFT_SAVE, function(details) {
 		mailSubject = details.subject;
 		mailTo = details.to;
-		insertMergeButton();
 	});
 
 });
