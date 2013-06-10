@@ -7,14 +7,20 @@ Gmailr.init(function(G) {
 			insertMergeButton();
 	});
 
-	var url = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
+	var URL = "https://script.google.com/macros/s/AKfycbxRSJAFYDdb_Mv1kvof7e6eOb3D2lOE_pjLbzumz3kohDM8pE08/exec"
+
 	var newAuth = function() {
 		var height = 200;
 		var width = 300;
 		var top = (screen.height - height)/2;
 		var left = (screen.width - width)/2;
 		var positionString = "height="+height+",width="+width+",top="+top+",left="+left
-		var win = window.open(url,"windowName",positionString);
+		var win = window.open(URL,"windowName",positionString);
+		var objwin = new RegExp('object','gi');
+		setTimeout(function(){
+				if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight)<200)
+					modalError("Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on Authorization needed and grant the authorization!");
+			},5000);
 	}
 
 	var insertMergeButton = function() {
@@ -42,7 +48,7 @@ Gmailr.init(function(G) {
 				else {
 					$("#btn-merge").text("GMerging");
 					$.ajax({
-						url: url,
+						url: URL,
 						crossDomain: true,
 						data: {subject:mailSubject},
 						dataType: "jsonp",
@@ -66,7 +72,7 @@ Gmailr.init(function(G) {
 				}
 			}
 			else
-				modalError("Seems like you clicked too fast, wait for the draft to save first");
+				modalError("Seems like you clicked too fast, just wait a few more seconds for the draft to save in Gmail");
 		});
 	}
 
@@ -75,7 +81,7 @@ Gmailr.init(function(G) {
     dialog = new GMailUI.ModalDialog("Houston, we have a problem!");
     container = dialog.append(new GMailUI.ModalDialog.Container);
     footer = dialog.append(new GMailUI.ModalDialog.Footer);
-    okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, my mistake!"));
+    okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, ok!"));
     okButton.on('click', dialog.close);
     container.append(message);
     dialog.open();
