@@ -66,7 +66,6 @@ Gmailr.init(function(G) {
 							// TODO Check the error (possibly using return type) for authenticating or for retrying
 							newAuth();
 							$("#btn-merge").text("GMerge");
-							insertListener();
 						}
 					});
 				}
