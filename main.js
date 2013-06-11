@@ -1,13 +1,15 @@
 Gmailr.debug = true; // Turn verbose debugging messages on
 
+// MUST REVISE THE YOU TYPED TOO FAST ERROR MESSAGE
 
 Gmailr.init(function(G) {
-	$(document).bind('DOMNodeInserted', function(e) {
-		if (e.target == $("[role='textbox']").last()[0])
-			insertMergeButton();
+	$(document).on('DOMNodeInserted', function(e) {
+		if ($(e.target).attr("aria-label") == "Compose reply")
+			insertMergeButton($(e.target));
 	});
 
 	var URL = "https://script.google.com/macros/s/AKfycbxRSJAFYDdb_Mv1kvof7e6eOb3D2lOE_pjLbzumz3kohDM8pE08/exec"
+	var composeCount = 0;
 
 	var newAuth = function() {
 		var height = 200;
@@ -23,12 +25,10 @@ Gmailr.init(function(G) {
 			},5000);
 	}
 
-	var insertMergeButton = function() {
-		if ($("#btn-merge").length == 0) {
-			var button = '<td class="gU Up"><div class="J-J5-Ji" id=":18m"><div tabindex="1" role="button" id="btn-merge" class="T-I J-J5-Ji aoO T-I-atl L3" style="-moz-user-select: none;">GMerge</div></div></td>';
-			$(".gU.OoRYyc").after(button);
-			insertListener();
-		}
+	var insertMergeButton = function(jQ) {
+		var button = '<td class="gU Up"><div class="J-J5-Ji" id=":18m"><div tabindex="1" role="button" id="btn-merge-'+ ++composeCount+'" class="T-I J-J5-Ji aoO T-I-atl L3" style="-moz-user-select: none;">GMerge</div></div></td>';
+		jQ.parents(".iN").find(".gU.OoRYyc").after(button);
+		insertListener($("#btn-merge-"+composeCount));
 	}
 
 	var mailSubject = "";
@@ -87,8 +87,8 @@ Gmailr.init(function(G) {
   }
 
 	G.observe(Gmailr.EVENT_DRAFT_SAVE, function(details) {
-		mailSubject = details.subject;
-		mailTo = details.to;
+		//mailSubject = details.subject;
+		//mailTo = details.to;
 	});
 
 });
