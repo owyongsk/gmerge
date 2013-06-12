@@ -1,11 +1,8 @@
-Gmailr.debug = true; // Turn verbose debugging messages on
-
 // TODO
 // server validation for stuff
 // test on windows machine
-// Remove dependency on Gmailr
 
-Gmailr.init(function(G) {
+$(document).ready(function() {
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Compose reply")
 			insertMergeButton($(e.target));
@@ -33,7 +30,8 @@ Gmailr.init(function(G) {
 			var button = '<td class="gU Up"><div class="J-J5-Ji" id=":18m"><div tabindex="1" role="button" id="btn-merge-'+ ++composeCount+'" class="T-I J-J5-Ji aoO T-I-atl L3" style="-moz-user-select: none;">GMerge</div></div></td>';
 			jQ.parents(".iN").find(".gU.OoRYyc").after(button);
 			var newJq = $("#btn-merge-"+composeCount);
-			newJq.data({fromDraft: getDraftId(jQ)});
+			if (getToLength(newJq) && getSubject(newJq))
+				newJq.data({fromDraft: true});
 			insertListener(newJq);
 		}
 	}
@@ -51,17 +49,17 @@ Gmailr.init(function(G) {
 			} else if (!getToLength(jQ)) {
 				modalError(forgot + "recipients");
 				insertListener(jQ);
-			} else if (getDraftId(jQ)) {
+			} else if (jQ.data("fromDraft")) {
 				jQ.text("GMerging");
 				setTimeout(function(){ajaxRequest(jQ)},2500);
 			} else {
-				if (jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
-					jQ.text("GMerging");
-					ajaxRequest(jQ)
-				} else {
-					modalError("Seems like you clicked too fast, just wait a few more seconds for the draft to save in Gmail");
-					insertListener(jQ);
-				}
+				jQ.text("GMerging");
+				interval = setInterval(function(){
+					if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
+						ajaxRequest(jQ);
+						clearInterval(interval);
+					}
+				},300)
 			}
 		});
 	}
@@ -92,7 +90,7 @@ Gmailr.init(function(G) {
 					insertListener(jQ);
 				} else if (data.status === "success") {
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click()
-					$(".vh").first().text("You have Gmerged like a boss! You have "+data.quota_left+" Gmerge emails left today!");
+					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
 				}
 			},
 			error: function(obj, msg, error){
@@ -102,7 +100,7 @@ Gmailr.init(function(G) {
 				insertListener(jQ);
 			}
 		});
-}
+	}
 
 	var modalError = function(message) {
     dialog = new GMailUI.ModalDialog("Houston, we have a problem!");
@@ -113,5 +111,5 @@ Gmailr.init(function(G) {
     container.append(message);
     dialog.open();
   }
-
+	alert("Script loads");
 });
