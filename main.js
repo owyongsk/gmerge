@@ -23,11 +23,9 @@ Gmailr.init(function(G) {
 		var win = window.open(URL,"windowName",positionString);
 		var objwin = new RegExp('object','gi');
 		setTimeout(function(){
-				if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight)<200){
-					modalError("Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on Authorization needed and grant the authorization!");
-					insertListener(jQ);
-				}
-			},5000);
+			if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight)<200)
+				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on "Authorization needed" and grant the authorization!');
+		},4000);
 	}
 
 	var insertMergeButton = function(jQ) {
@@ -40,24 +38,25 @@ Gmailr.init(function(G) {
 		}
 	}
 
-	// those hidden fields uses ajax too there's a few MS delay
-	// must change them into real time instead of waiting for response
-
 	var insertListener = function(jQ) {
 		jQ.one("click", function(event){
 			event.preventDefault();
 			var forgot = "Seems like you forgot your ";
-			if (!getSubject(jQ) && !getTo(jQ)) {
+			if (!getSubject(jQ) && !getToLength(jQ)) {
 				modalError(forgot + "subject and recipients");
 				insertListener(jQ);
 			} else if (!getSubject(jQ)) {
 				modalError(forgot + "subject");
 				insertListener(jQ);
-			} else if (!getTo(jQ)) {
+			} else if (!getToLength(jQ)) {
 				modalError(forgot + "recipients");
 				insertListener(jQ);
+			} else if (getDraftId(jQ)) {
+				jQ.text("GMerging");
+				setTimeout(function(){ajaxRequest(jQ)},2500);
 			} else {
-				if (jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved" || getDraftId(jQ)) {
+				if (jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
+					jQ.text("GMerging");
 					ajaxRequest(jQ)
 				} else {
 					modalError("Seems like you clicked too fast, just wait a few more seconds for the draft to save in Gmail");
@@ -71,16 +70,15 @@ Gmailr.init(function(G) {
 		return jQ.parents(".I5").find("input[name='draft']").val();
 	}
 
-	var getTo = function(jQ) {
-		return jQ.parents(".I5").find("input[name='to']").val();
+	var getToLength = function(jQ) {
+		return jQ.parents(".I5").find("input[name='to']").length;
 	}
 
 	var getSubject = function(jQ) {
-		return jQ.parents(".I5").find("input[name='subject']").val();
+		return jQ.parents(".I5").find("input[name='subjectbox']").val();
 	}
 
 	var ajaxRequest = function(jQ) {
-		jQ.text("GMerging");
 		$.ajax({
 			url: URL,
 			crossDomain: true,
