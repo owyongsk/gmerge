@@ -3,6 +3,11 @@
 // test on windows machine
 
 $(document).ready(function() {
+	if (window.location.href.indexOf("view=btop") > -1)
+		setTimeout(function(){ 
+			insertMergeButton($("[aria-label='Compose reply']"));
+		},2500);
+
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Compose reply")
 			insertMergeButton($(e.target));
@@ -21,7 +26,7 @@ $(document).ready(function() {
 		var objwin = new RegExp('object','gi');
 		setTimeout(function(){
 			if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight)<200)
-				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on "Authorization needed" and grant the authorization!');
+				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on the blue link "Authorization needed" and grant the authorization!');
 		},4000);
 	}
 
@@ -111,5 +116,4 @@ $(document).ready(function() {
     container.append(message);
     dialog.open();
   }
-	alert("Script loads");
 });
