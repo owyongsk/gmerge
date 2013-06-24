@@ -25,6 +25,7 @@
   "manifest_version" : 2,
   "web_accessible_resources" : [
 		"lib/underscore-min.js",
-		"lib/gmailui.js"
+		"lib/gmailui.js",
+		"main.js"
   ]
 }
