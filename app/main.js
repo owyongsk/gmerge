@@ -3,6 +3,12 @@
 // test on windows machine
 
 $(document).ready(function() {
+	jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
+			return function( elem ) {
+					return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+			};
+	});
+
 	if (window.location.href.indexOf("view=btop") > -1)
 		setTimeout(function(){ 
 			insertMergeButton($("[aria-label='Compose reply']"));
@@ -35,36 +41,46 @@ $(document).ready(function() {
 			var button = '<td class="gU Up"><div class="J-J5-Ji" id=":18m"><div tabindex="1" role="button" id="btn-merge-'+ ++composeCount+'" class="T-I J-J5-Ji aoO T-I-atl L3" style="-moz-user-select: none;">GMerge</div></div></td>';
 			jQ.parents(".iN").find(".gU.OoRYyc").after(button);
 			var newJq = $("#btn-merge-"+composeCount);
-			if (getToLength(newJq) && getSubject(newJq))
+			if ((getToLength(newJq) && getSubject(newJq)) || (findGmergeCsvLength(newJq) && getSubject(newJq)))
 				newJq.data({fromDraft: true});
 			insertListener(newJq);
 		}
 	}
-
+	
 	var insertListener = function(jQ) {
 		jQ.one("click", function(event){
 			event.preventDefault();
 			var forgot = "Seems like you forgot your ";
-			if (!getSubject(jQ) && !getToLength(jQ)) {
-				modalError(forgot + "subject and recipients");
-				insertListener(jQ);
-			} else if (!getSubject(jQ)) {
-				modalError(forgot + "subject");
-				insertListener(jQ);
-			} else if (!getToLength(jQ)) {
-				modalError(forgot + "recipients");
-				insertListener(jQ);
-			} else if (jQ.data("fromDraft")) {
-				jQ.text("GMerging");
-				setTimeout(function(){ajaxRequest(jQ)},2500);
+			if (findGmergeCsvLength(jQ)){
+				if (!getSubject(jQ)){
+					modalError(forgot + "subject");
+					insertListener(jQ);
+				} else if (jQ.data("fromDraft")) {
+					jQ.text("GMerging");
+					setTimeout(function(){ajaxRequest(jQ)},2500);
+				}
 			} else {
-				jQ.text("GMerging");
-				interval = setInterval(function(){
-					if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
-						ajaxRequest(jQ);
-						clearInterval(interval);
-					}
-				},300)
+				if (!getSubject(jQ) && !getToLength(jQ)) {
+					modalError(forgot + "subject and recipients");
+					insertListener(jQ);
+				} else if (!getSubject(jQ)) {
+					modalError(forgot + "subject");
+					insertListener(jQ);
+				} else if (!getToLength(jQ)) {
+					modalError(forgot + "recipients");
+					insertListener(jQ);
+				} else if (jQ.data("fromDraft")) {
+					jQ.text("GMerging");
+					setTimeout(function(){ajaxRequest(jQ)},2500);
+				} else {
+					jQ.text("GMerging");
+					interval = setInterval(function(){
+						if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
+							ajaxRequest(jQ);
+							clearInterval(interval);
+						}
+					},300)
+				}
 			}
 		});
 	}
@@ -81,6 +97,10 @@ $(document).ready(function() {
 		return jQ.parents(".I5").find("input[name='subjectbox']").val();
 	}
 
+	var findGmergeCsvLength = function(jQ) {
+		return jQ.parents(".I5").find(".vI:Contains('gmerge.csv')").length;
+	}
+
 	var ajaxRequest = function(jQ) {
 		$.ajax({
 			url: URL,
@@ -88,8 +108,7 @@ $(document).ready(function() {
 			data: {id: getDraftId(jQ)},
 			dataType: "jsonp",
 			success: function(data){
-				if (data.status === "failed"){
-					newAuth(jQ);
+				if (data.status === "failed") {
 					jQ.text("GMerge");
 					modalError(data.error_message);
 					insertListener(jQ);
@@ -99,7 +118,6 @@ $(document).ready(function() {
 				}
 			},
 			error: function(obj, msg, error){
-				// TODO Check the error (possibly using return type) for authenticating or for retrying
 				newAuth(jQ);
 				jQ.text("GMerge");
 				insertListener(jQ);
