@@ -24,6 +24,10 @@
 	},
   "manifest_version" : 2,
   "web_accessible_resources" : [
+		"assets/1.png",
+		"assets/2.png",
+		"assets/3.png",
+		"assets/4.png",
 		"lib/underscore-min.js",
 		"lib/gmailui.js",
 		"main.js"
