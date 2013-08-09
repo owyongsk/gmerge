@@ -15,7 +15,7 @@ $(document).ready(function() {
 		},2500);
 
 	$(document).on('DOMNodeInserted', function(e) {
-		if ($(e.target).attr("aria-label") === "Compose reply")
+		if ($(e.target).attr("aria-label") === "Message Body")
 			insertMergeButton($(e.target));
 	});
 
