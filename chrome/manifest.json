@@ -8,7 +8,7 @@
         "*://mail.google.com/*"
       ],
       "js": [
-        "lib/yepnope.js/yepnope.1.5.4-min.js",
+        "lib/vendor/yepnope.1.5.4-min.js",
         "lib/bootstrap.js"
       ],
       "run_at": "document_end"
@@ -28,8 +28,8 @@
 		"assets/2.png",
 		"assets/3.png",
 		"assets/4.png",
-		"lib/underscore-min.js",
-		"lib/gmailui.js",
-		"main.js"
+		"lib/vendor/underscore-min.js",
+		"lib/vendor/gmailui.js",
+		"lib/main.js"
   ]
 }

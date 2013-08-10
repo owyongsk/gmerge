@@ -3,8 +3,8 @@ if (top.document === document) {
     test: !(typeof jQuery !== "undefined" && jQuery !== null),
     yep: 'https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'
   });
-	yepnope([chrome.extension.getURL("lib/underscore-min.js"), 
-					 chrome.extension.getURL("lib/gmailui.js"), 
-					 chrome.extension.getURL("main.js")]);
+	yepnope([chrome.extension.getURL("lib/vendor/underscore-min.js"), 
+					 chrome.extension.getURL("lib/vendor/gmailui.js"), 
+					 chrome.extension.getURL("lib/main.js")]);
 	localStorage.gmergePath = chrome.extension.getURL("");
 }
