@@ -5,6 +5,6 @@
   "description": "An extension that lets you Mail Merge on Gmail itself",
   "author": "SoonKhen OwYong",
   "license": "MPL 2.0",
-  "version": "0.1.1",
+  "version": "0.1.2",
 	"main": "init"
 }

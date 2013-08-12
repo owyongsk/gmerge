@@ -25,7 +25,7 @@ $(document).ready(function() {
 	var URL = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
 	var composeCount = 0;
 
-	var newAuth = function() {
+	var newAuth = function(jQ) {
 		var height = 200;
 		var width = 300;
 		var top = (screen.height - height)/2;
@@ -36,6 +36,7 @@ $(document).ready(function() {
 		setTimeout(function(){
 			if(!win) {
 				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on "Show https://script.google....." and grant the authorization!');
+				jQ.parents(".n1tfz").find(".oG").first().text("Saved").addClass("aOy");
 			}
 		},4000);
 	};
@@ -128,7 +129,7 @@ $(document).ready(function() {
 	self.port.on("failedAjaxRequest", function(response){
 		var data = JSON.parse(response);
 		var jQ = $("[id='"+data.divId+"']");
-		newAuth();
+		newAuth(jQ);
 		jQ.text("GMerge");
 		insertListener(jQ);
 	});
