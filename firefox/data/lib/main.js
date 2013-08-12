@@ -25,17 +25,17 @@ $(document).ready(function() {
 	var URL = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
 	var composeCount = 0;
 
-	var newAuth = function(jQ) {
+	var newAuth = function() {
 		var height = 200;
 		var width = 300;
 		var top = (screen.height - height)/2;
 		var left = (screen.width - width)/2;
 		var positionString = "height="+height+",width="+width+",top="+top+",left="+left;
 		var win = window.open(URL,"windowName",positionString);
-		// popup blocker might not work in Firefox
+		//Firefox popup blocker
 		setTimeout(function(){
-			if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight, 10)<200) {
-				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on the blue link "Authorization needed" and grant the authorization!');
+			if(!win) {
+				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on "Show https://script.google....." and grant the authorization!');
 			}
 		},4000);
 	};
@@ -106,6 +106,8 @@ $(document).ready(function() {
 		return jQ.parents(".I5").find(".vI:Contains('gmerge.csv')").length;
 	};
 
+	//Different ajaxRequest due to how Firefox handles jsonp
+	//Must use Firefox extension's request module
 	var ajaxRequest = function(jQ) {
 		self.port.emit("ajaxRequest", {draftId: getDraftId(jQ), url: URL, divId: jQ[0].id});
 	};
@@ -121,6 +123,14 @@ $(document).ready(function() {
 			jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 			$(".vh").first().text("You have GMerged like a boss! You have "+data.response.quota_left+" GMerge emails left today!");
 		}
+	});
+
+	self.port.on("failedAjaxRequest", function(response){
+		var data = JSON.parse(response);
+		var jQ = $("[id='"+data.divId+"']");
+		newAuth();
+		jQ.text("GMerge");
+		insertListener(jQ);
 	});
 
 	var modalStepByStep = function(){
@@ -181,7 +191,7 @@ $(document).ready(function() {
 
 	if (!localStorage.GmergeSeenTutorial){
 		var modalTutorial = new modalStepByStep();
-		modalTutorial.add("<p>Thanks for being awesome by downloading GMerge Alpha now with a new feature for uploading CSV for more advanced merge! The first time you click the GMerge button, there will be a popup asking for your authorization.</p>");
+		modalTutorial.add("<p>Thanks for being awesome by downloading GMerge Alpha now with a new feature for uploading CSV for more advanced merge! The first time you click the GMerge button, it will take a few seconds and there will be a popup asking for your authorization.</p>");
 		modalTutorial.add("<p>The simplest way to GMerge is by entering contacts in your <b>To:</b> field as normal. You must use your regular contacts with names or something with this 'Bob Loblaw &#60;bob@loblaw.com&#62;' format.</p>"+imagePath("1"));
 		modalTutorial.add("<p>Now type [First Name], [Last Name], [Full Name], or [Email] anywhere in the Subject or Body of the message and press the GMerge button.</p>"+imagePath("2"));
 		modalTutorial.add("<p>Or you can upload a CSV file named gmerge.csv with the email fields such as the one below! If you use this option, the <b>To:</b> field will not be used in the merge.</p>"+imagePath("3"));

@@ -14,8 +14,12 @@ require("sdk/page-mod").PageMod({
 				url: message.url,
 				content: {id: message.draftId},
 				onComplete: function(response){
-					var new_response = '{"divId":"'+message.divId+'", "response":'+response.text+'}';
-					worker.port.emit("ajaxRequestResponse", new_response);
+					if (response.text.match(/Authorization needed/) !== null) {
+						worker.port.emit("failedAjaxRequest", '{"divId":"'+message.divId+'"}')
+					} else {
+						var resp = '{"divId":"'+message.divId+'", "response":'+response.text+'}';
+						worker.port.emit("ajaxRequestResponse", resp);
+					}
 				}
 			}).get();
 		});
