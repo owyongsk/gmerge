@@ -21,7 +21,6 @@ $(document).ready(function() {
 		}
 	});
 
-	//var URL = "https://script.google.com/macros/s/AKfycbxRSJAFYDdb_Mv1kvof7e6eOb3D2lOE_pjLbzumz3kohDM8pE08/exec";
 	var URL = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
 	var composeCount = 0;
 
