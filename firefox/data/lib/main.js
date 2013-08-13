@@ -9,6 +9,11 @@ $(document).ready(function() {
 			};
 	});
 
+	var URL = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
+	var composeCount = 0;
+	var fromDraft = false;
+	window.gmerge = {debugger: false};
+
 	if (window.location.href.indexOf("view=btop") > -1) {
 		setTimeout(function(){ 
 			insertMergeButton($("[aria-label='Attach files']"));
@@ -20,9 +25,6 @@ $(document).ready(function() {
 			insertMergeButton($(e.target));
 		}
 	});
-
-	var URL = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
-	var composeCount = 0;
 
 	var newAuth = function(jQ) {
 		var height = 200;
@@ -46,10 +48,20 @@ $(document).ready(function() {
 			jQ.parents(".iN").find(".gU.OoRYyc").after(button);
 			var newJq = $("#btn-merge-"+composeCount);
 			if ((getToLength(newJq) && getSubject(newJq)) || (findGmergeCsvLength(newJq) && getSubject(newJq))) {
-				newJq.data({fromDraft: true});
+				newJq.parents(".n1tfz").find(".oG").first().text("Saved").addClass("aOy");
+				fromDraft = true;
 			}
 			insertListener(newJq);
 		}
+	};
+
+	var waitForSaved = function(jQ){
+		var interval = setInterval(function(){
+			if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
+				ajaxRequest(jQ);
+				clearInterval(interval);
+			}
+		},300);
 	};
 
 	var insertListener = function(jQ) {
@@ -60,9 +72,9 @@ $(document).ready(function() {
 				if (!getSubject(jQ)){
 					modalError(forgot + "subject");
 					insertListener(jQ);
-				} else if (jQ.data("fromDraft")) {
+				} else {
 					jQ.text("GMerging");
-					setTimeout(function(){ajaxRequest(jQ);},2500);
+					waitForSaved(jQ);
 				}
 			} else {
 				if (!getSubject(jQ) && !getToLength(jQ)) {
@@ -74,19 +86,12 @@ $(document).ready(function() {
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
-				} else if (jQ.data("fromDraft")) {
-					jQ.text("GMerging");
-					setTimeout(function(){ajaxRequest(jQ);},2500);
 				} else {
 					jQ.text("GMerging");
-					var interval = setInterval(function(){
-						if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
-							ajaxRequest(jQ);
-							clearInterval(interval);
-						}
-					},300);
+					waitForSaved(jQ);
 				}
 			}
+			saveDebugObject(jQ);
 		});
 	};
 
@@ -117,7 +122,7 @@ $(document).ready(function() {
 		var jQ = $("[id='"+data.divId+"']");
 		if (data.response.status === "failed") {
 			jQ.text("GMerge");
-			modalError(data.response.error_message);
+			modalError(data.response.error_message, jQ);
 			insertListener(jQ);
 		} else if (data.response.status === "success") {
 			jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
@@ -164,6 +169,7 @@ $(document).ready(function() {
 			} else if (currentMessage === (messages.length-1)) {
 				$(nextButton.element).hide();
 				$(doneButton.element).show();
+				localStorage.GmergeSeenTutorial = true;
 			}
 		};
 		this.add = function(message){
@@ -179,16 +185,64 @@ $(document).ready(function() {
 		return "<img src='"+localStorage.gmergePath+"assets/"+i+".png'>";
 	};
 
-	var modalError = function(message) {
+	// For debugging in the wild
+	var getTo = function(jQ){
+		return $.makeArray(jQ.parents(".I5").find("input[name='to']").map(function(){return this.value;}));
+	};
+
+	var getFrom = function(jQ){
+		return jQ.parents(".I5").find("input[name='from']").val();
+	};
+
+	var getBody = function(jQ){
+		return jQ.parents(".I5").find("div[aria-label='Message Body']").html();
+	};
+
+	var getAttachments = function(jQ){
+		return $.makeArray(jQ.parents(".I5").find(".vI").map(function(){return this.innerHTML;}));
+	};
+
+	var getAttachmentSizes = function(jQ){
+		return $.makeArray(jQ.parents(".I5").find(".vJ").map(function(){return this.innerHTML;}));
+	};
+
+	var saveDebugObject = function(debugJq){
+		if (window.gmerge.debugger === false){
+			return;
+		}
+		window.gmerge.debug = JSON.stringify({
+			userAgent: navigator.userAgent,
+			from: getFrom(debugJq),
+			to: getTo(debugJq),
+			subject: getSubject(debugJq),
+			body: getBody(debugJq),
+			attachments: getAttachments(debugJq),
+			attachmentSizes: getAttachmentSizes(debugJq),
+			draftId: getDraftId(debugJq),
+			fromDraft: fromDraft,
+			composeCount: composeCount,
+			seenTutorial: localStorage.GmergeSeenTutorial,
+			gmergePath: localStorage.gmergePath,
+			location: window.top.location.href
+		}, undefined, 2);
+	};
+
+	var modalError = function(message, debugJq) {
     dialog = new GMailUI.ModalDialog("Houston, we have a problem!");
     container = dialog.append(new GMailUI.ModalDialog.Container());
     footer = dialog.append(new GMailUI.ModalDialog.Footer());
     okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, ok!","","cancel"));
     okButton.on('click', dialog.close);
+		if (debugJq) {
+			window.gmerge.debugger = true;
+			saveDebugObject(debugJq);
+			container.append(window.gmerge.debug+"<br>");
+		}
     container.append(message);
     dialog.open();
   };
 
+	//Tutorial at the beginning
 	if (!localStorage.GmergeSeenTutorial){
 		var modalTutorial = new modalStepByStep();
 		modalTutorial.add("<p>Thanks for being awesome by downloading GMerge Alpha now with a new feature for uploading CSV for more advanced merge! The first time you click the GMerge button, it will take a few seconds and there will be a popup asking for your authorization.</p>");
@@ -197,6 +251,5 @@ $(document).ready(function() {
 		modalTutorial.add("<p>Or you can upload a CSV attachment named gmerge.csv with the email fields such as the one below! If you use this option, the <b>To:</b> field will not be used in the merge.</p>"+imagePath("3"));
 		modalTutorial.add("<p>Now go crazy and be much more flexible with the fields available!</p>"+imagePath("4"));
 		modalTutorial.start();
-		localStorage.GmergeSeenTutorial = true;
 	}
 });
