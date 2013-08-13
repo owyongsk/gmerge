@@ -3,7 +3,7 @@ var self = require("sdk/self");
 require("sdk/page-mod").PageMod({
 	include: ["https://mail.google.com/*","http://mail.google.com/*"],
 	contentScript: "localStorage.gmergePath = '"+self.data.url("")+"';",
-	contentScriptFile: [self.data.url("lib/vendor/jquery.min.js"),
+	contentScriptFile: [self.data.url("lib/vendor/jquery-1.9.1.min.js"),
 											self.data.url("lib/vendor/underscore-min.js"),
 											self.data.url("lib/vendor/gmailui.js"),
 											self.data.url("lib/main.js")],
