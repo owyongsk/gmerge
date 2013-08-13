@@ -46,11 +46,20 @@ $(document).ready(function() {
 			jQ.parents(".iN").find(".gU.OoRYyc").after(button);
 			var newJq = $("#btn-merge-"+composeCount);
 			if ((getToLength(newJq) && getSubject(newJq)) || (findGmergeCsvLength(newJq) && getSubject(newJq))) {
-				newJq.data({fromDraft: true});
+				newJq.parents(".n1tfz").find(".oG").first().text("Saved").addClass("aOy");
 				fromDraft = true;
 			}
 			insertListener(newJq);
 		}
+	};
+
+	var waitForSaved = function(jQ){
+		var interval = setInterval(function(){
+			if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
+				ajaxRequest(jQ);
+				clearInterval(interval);
+			}
+		},300);
 	};
 
 	var insertListener = function(jQ) {
@@ -61,9 +70,9 @@ $(document).ready(function() {
 				if (!getSubject(jQ)){
 					modalError(forgot + "subject");
 					insertListener(jQ);
-				} else if (jQ.data("fromDraft")) {
+				} else {
 					jQ.text("GMerging");
-					setTimeout(function(){ajaxRequest(jQ);},2500);
+					waitForSaved(jQ);
 				}
 			} else {
 				if (!getSubject(jQ) && !getToLength(jQ)) {
@@ -75,17 +84,9 @@ $(document).ready(function() {
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
-				} else if (jQ.data("fromDraft")) {
-					jQ.text("GMerging");
-					setTimeout(function(){ajaxRequest(jQ);},2500);
 				} else {
 					jQ.text("GMerging");
-					var interval = setInterval(function(){
-						if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
-							ajaxRequest(jQ);
-							clearInterval(interval);
-						}
-					},300);
+					waitForSaved(jQ);
 				}
 			}
 			saveDebugObject(jQ);
@@ -124,7 +125,7 @@ $(document).ready(function() {
 					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
 				}
 			},
-			error: function(obj, msg, error){
+			error: function(){
 				newAuth();
 				jQ.text("GMerge");
 				insertListener(jQ);
@@ -202,7 +203,7 @@ $(document).ready(function() {
 
 	var saveDebugObject = function(debugJq){
 		if (window.gmerge.debugger === false){
-			return
+			return;
 		}
 		window.gmerge.debug = JSON.stringify({
 			userAgent: navigator.userAgent,
