@@ -12,7 +12,7 @@ $(document).ready(function() {
 	var URL = "https://script.google.com/macros/s/AKfycbxRSJAFYDdb_Mv1kvof7e6eOb3D2lOE_pjLbzumz3kohDM8pE08/exec";
 	var composeCount = 0;
 	var fromDraft = false;
-	window.gmerge = {debugger: false};
+	window.gmerge = {debugger: "false"};
 
 	if (window.location.href.indexOf("view=btop") > -1) {
 		setTimeout(function(){ 
@@ -202,24 +202,23 @@ $(document).ready(function() {
 	};
 
 	var saveDebugObject = function(debugJq){
-		if (window.gmerge.debugger === false){
-			return;
+		if (window.gmerge.debugger === "true"){
+			window.gmerge.debug = JSON.stringify({
+				userAgent: navigator.userAgent,
+				from: getFrom(debugJq),
+				to: getTo(debugJq),
+				subject: getSubject(debugJq),
+				body: getBody(debugJq),
+				attachments: getAttachments(debugJq),
+				attachmentSizes: getAttachmentSizes(debugJq),
+				draftId: getDraftId(debugJq),
+				fromDraft: fromDraft,
+				composeCount: composeCount,
+				seenTutorial: localStorage.GmergeSeenTutorial,
+				gmergePath: localStorage.gmergePath,
+				location: window.top.location.href
+			}, undefined, 2);
 		}
-		window.gmerge.debug = JSON.stringify({
-			userAgent: navigator.userAgent,
-			from: getFrom(debugJq),
-			to: getTo(debugJq),
-			subject: getSubject(debugJq),
-			body: getBody(debugJq),
-			attachments: getAttachments(debugJq),
-			attachmentSizes: getAttachmentSizes(debugJq),
-			draftId: getDraftId(debugJq),
-			fromDraft: fromDraft,
-			composeCount: composeCount,
-			seenTutorial: localStorage.GmergeSeenTutorial,
-			gmergePath: localStorage.gmergePath,
-			location: window.top.location.href
-		}, undefined, 2);
 	};
 
 	var modalError = function(message, debugJq) {
@@ -229,7 +228,7 @@ $(document).ready(function() {
     okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, ok!","","cancel"));
     okButton.on('click', dialog.close);
 		if (debugJq) {
-			window.gmerge.debugger = true;
+			window.gmerge.debugger = "true";
 			saveDebugObject(debugJq);
 			container.append(window.gmerge.debug+"<br>");
 		}
