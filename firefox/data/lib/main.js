@@ -9,10 +9,10 @@ $(document).ready(function() {
 			};
 	});
 
-	var URL = "https://script.google.com/macros/s/AKfycbyMKpGPalHcUAkc29fizWw2VW3Kn_yeMUVdANkIShOb/dev";
+	var URL = "https://script.google.com/macros/s/AKfycbxRSJAFYDdb_Mv1kvof7e6eOb3D2lOE_pjLbzumz3kohDM8pE08/exec";
 	var composeCount = 0;
 	var fromDraft = false;
-	window.gmerge = {debugger: false};
+	localStorage.debugger = false;
 
 	if (window.location.href.indexOf("view=btop") > -1) {
 		setTimeout(function(){ 
@@ -207,10 +207,10 @@ $(document).ready(function() {
 	};
 
 	var saveDebugObject = function(debugJq){
-		if (window.gmerge.debugger === false){
+		if (localStorage.debugger === false){
 			return;
 		}
-		window.gmerge.debug = JSON.stringify({
+		localStorage.debug = JSON.stringify({
 			userAgent: navigator.userAgent,
 			from: getFrom(debugJq),
 			to: getTo(debugJq),
@@ -234,9 +234,9 @@ $(document).ready(function() {
     okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, ok!","","cancel"));
     okButton.on('click', dialog.close);
 		if (debugJq) {
-			window.gmerge.debugger = true;
+			localStorage.debugger = true;
 			saveDebugObject(debugJq);
-			container.append(window.gmerge.debug+"<br>");
+			container.append(localStorage.debug+"<br>");
 		}
     container.append(message);
     dialog.open();
