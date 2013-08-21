@@ -63,8 +63,17 @@ $(document).ready(function() {
 	};
 
 	var insertListener = function(jQ) {
-		jQ.one("click", function(event){
+		jQ.one("mousedown", function(event){
 			event.preventDefault();
+			if (event.which === 3){
+				window.gmerge.debugger = "true";
+				saveDebugObject(jQ);
+				modalError("<p>If you accidentally right clicked and open this,"+
+					" you can just close it.</p>"+window.gmerge.debug,
+					null, "Debugging GMerge!");
+				insertListener(jQ);
+				return;
+			}
 			var forgot = "Seems like you forgot your ";
 			if (findGmergeCsvLength(jQ)){
 				if (!getSubject(jQ)){
@@ -89,7 +98,6 @@ $(document).ready(function() {
 					waitForSaved(jQ);
 				}
 			}
-			saveDebugObject(jQ);
 		});
 	};
 
@@ -221,20 +229,24 @@ $(document).ready(function() {
 		}
 	};
 
-	var modalError = function(message, debugJq) {
-    dialog = new GMailUI.ModalDialog("Houston, we have a problem!");
-    container = dialog.append(new GMailUI.ModalDialog.Container());
-    footer = dialog.append(new GMailUI.ModalDialog.Footer());
-    okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, ok!","","cancel"));
-    okButton.on('click', dialog.close);
+	var modalError = function(message, debugJq, header) {
+		if (header) {
+			dialog = new GMailUI.ModalDialog(header);
+		} else {
+			dialog = new GMailUI.ModalDialog("Houston, we have a problem!");
+		}
+		container = dialog.append(new GMailUI.ModalDialog.Container());
+		footer = dialog.append(new GMailUI.ModalDialog.Footer());
+		okButton = footer.append(new GMailUI.ModalDialog.Button("Aww, ok!","","cancel"));
+		okButton.on('click', dialog.close);
 		if (debugJq) {
 			window.gmerge.debugger = "true";
 			saveDebugObject(debugJq);
 			container.append(window.gmerge.debug+"<br>");
 		}
-    container.append(message);
-    dialog.open();
-  };
+		container.append(message);
+		dialog.open();
+	};
 
 	//Tutorial at the beginning
 	if (!localStorage.GmergeSeenTutorial){
