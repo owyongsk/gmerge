@@ -230,7 +230,7 @@ $(document).ready(function() {
 				seenTutorial: localStorage.GmergeSeenTutorial,
 				gmergePath: localStorage.gmergePath,
 				location: window.top.location.href
-			}, undefined, 2);
+			}, undefined, 2).replace(/</g, "&lt;").replace(/>/g, "&gt;");
 		}
 	};
 
