@@ -1,7 +1,3 @@
-// TODO
-// server validation for stuff
-// test on windows machine
-
 $(document).ready(function() {
 	jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
 			return function( elem ) {
@@ -131,7 +127,6 @@ $(document).ready(function() {
 		});
 		return incorrectFormat;
 	};
-
 
 	var ajaxRequest = function(jQ) {
 		$.ajax({
