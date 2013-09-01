@@ -225,6 +225,10 @@ $(document).ready(function() {
 		return $.makeArray(jQ.parents(".I5").find(".vJ").map(function(){return this.innerHTML;}));
 	};
 
+	var getBccLength = function(jQ){
+		return jQ.parents(".I5").find("input[name='bcc']").length;
+	};
+
 	var saveDebugObject = function(debugJq){
 		if (sessionStorage.debugger === "true"){
 			sessionStorage.debug = JSON.stringify({
@@ -232,6 +236,7 @@ $(document).ready(function() {
 				from: getFrom(debugJq),
 				to: getTo(debugJq),
 				toCount: getToLength(debugJq),
+				bccCount: getBccLength(debugJq),
 				subject: getSubject(debugJq),
 				body: getBody(debugJq),
 				attachments: getAttachments(debugJq),
