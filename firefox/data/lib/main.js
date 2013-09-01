@@ -95,6 +95,10 @@ $(document).ready(function() {
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
+				} else if (invalidToFormat) {
+					modalError("Please make sure each recipient must be in this format: "
+										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
+					insertListener(jQ);
 				} else {
 					jQ.text("GMerging");
 					waitForSaved(jQ);
@@ -117,6 +121,17 @@ $(document).ready(function() {
 
 	var findGmergeCsvLength = function(jQ) {
 		return jQ.parents(".I5").find(".vI:Contains('gmerge.csv')").length;
+	};
+
+	var invalidToFormat = function(jQ) {
+		var incorrectFormat = false;
+		jQ.parents(".I5").find("input[name='to']").each(function(){ 
+			if (!(/.+\s<.+@.+\..+>/).test(this.value)){
+				incorrectFormat = true;
+				return false;
+			}
+		});
+		return incorrectFormat;
 	};
 
 	//Different ajaxRequest due to how Firefox handles jsonp
@@ -220,6 +235,7 @@ $(document).ready(function() {
 				userAgent: navigator.userAgent,
 				from: getFrom(debugJq),
 				to: getTo(debugJq),
+				toCount: getToLength(debugJq),
 				subject: getSubject(debugJq),
 				body: getBody(debugJq),
 				attachments: getAttachments(debugJq),
