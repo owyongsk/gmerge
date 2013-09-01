@@ -30,6 +30,7 @@
 		"assets/4.png",
 		"lib/vendor/underscore-min.js",
 		"lib/vendor/gmailui.js",
+		"lib/google-analytics.js",
 		"lib/main.js"
   ]
 }

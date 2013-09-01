@@ -14,11 +14,13 @@ $(document).ready(function() {
 		setTimeout(function(){ 
 			insertMergeButton($("[aria-label='Compose reply']"));
 		},2500);
+		_gaq.push(['_trackEvent','DOM','new_window_loaded']);
 	}
 
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Message Body") {
 			insertMergeButton($(e.target));
+			_gaq.push(['_trackEvent','DOM','button_inserted']);
 		}
 	});
 
@@ -32,6 +34,7 @@ $(document).ready(function() {
 		setTimeout(function(){
 			if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight, 10)<200) {
 				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on the blue link "Authorization needed" and grant the authorization!');
+				_gaq.push(['_trackEvent','INFO','has_popup_blocker']);
 			}
 		},4000);
 	};
@@ -68,6 +71,7 @@ $(document).ready(function() {
 					" you can just close it.</p>"+window.gmerge.debug,
 					null, "Debugging GMerge!");
 				insertListener(jQ);
+				_gaq.push(['_trackEvent','USER','debug_right_clicked']);
 				return;
 			}
 			var forgot = "Seems like you forgot your ";
@@ -75,27 +79,34 @@ $(document).ready(function() {
 				if (!getSubject(jQ)){
 					modalError(forgot + "subject");
 					insertListener(jQ);
+					_gaq.push(['_trackEvent','USER_ERROR','with_csv_forgot_subject']);
 				} else {
 					jQ.text("GMerging");
 					waitForSaved(jQ);
+					_gaq.push(['_trackEvent','USER','with_csv_clicked_gmerge']);
 				}
 			} else {
 				if (!getSubject(jQ) && !getToLength(jQ)) {
 					modalError(forgot + "subject and recipients");
 					insertListener(jQ);
+					_gaq.push(['_trackEvent','USER_ERROR','forgot_subject_and_recipients']);
 				} else if (!getSubject(jQ)) {
 					modalError(forgot + "subject");
 					insertListener(jQ);
+					_gaq.push(['_trackEvent','USER_ERROR','forgot_subject']);
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
+					_gaq.push(['_trackEvent','USER_ERROR','forgot_recipients']);
 				} else if (invalidToFormat) {
 					modalError("Please make sure each recipient must be in this format: "
 										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
 					insertListener(jQ);
+					_gaq.push(['_trackEvent','USER_ERROR','invalid_to_format']);
 				} else {
 					jQ.text("GMerging");
 					waitForSaved(jQ);
+					_gaq.push(['_trackEvent','USER','without_csv_clicked_gmerge']);
 				}
 			}
 		});
@@ -139,15 +150,18 @@ $(document).ready(function() {
 					jQ.text("GMerge");
 					modalError(data.error_message, jQ);
 					insertListener(jQ);
+					_gaq.push(['_trackEvent','SERVER_ERROR','shit_happened']);
 				} else if (data.status === "success") {
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
+					_gaq.push(['_trackEvent','USER','server_allow_gmerged']);
 				}
 			},
 			error: function(){
 				newAuth();
 				jQ.text("GMerge");
 				insertListener(jQ);
+				_gaq.push(['_trackEvent','USER','new_auth']);
 			}
 		});
 	};
@@ -184,6 +198,7 @@ $(document).ready(function() {
 				$(nextButton.element).hide();
 				$(doneButton.element).show();
 				localStorage.GmergeSeenTutorial = true;
+				_gaq.push(['_trackEvent','USER','seen_tutorial']);
 			}
 		};
 		this.add = function(message){
@@ -275,4 +290,5 @@ $(document).ready(function() {
 		modalTutorial.add("<p>Now go crazy and be much more flexible with the fields available!</p>"+imagePath("4"));
 		modalTutorial.start();
 	}
+	_gaq.push(['_trackEvent','DOM','script_loaded']);
 });

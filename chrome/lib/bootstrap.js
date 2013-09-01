@@ -5,6 +5,7 @@ if (top.document === document) {
   });
 	yepnope([chrome.extension.getURL("lib/vendor/underscore-min.js"), 
 					 chrome.extension.getURL("lib/vendor/gmailui.js"), 
+					 chrome.extension.getURL("lib/google-analytics.js"),
 					 chrome.extension.getURL("lib/main.js")]);
 	localStorage.gmergePath = chrome.extension.getURL("");
 }
