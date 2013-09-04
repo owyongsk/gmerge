@@ -10,12 +10,12 @@ $(document).ready(function() {
 	var fromDraft = false;
 	window.gmerge = {debugger: "false"};
 
-	if (window.location.href.indexOf("view=btop") > -1) {
-		setTimeout(function(){ 
-			insertMergeButton($("[aria-label='Message Body']"));
-		},2500);
-		_gaq.push(['_trackEvent','DOM','new_window_loaded']);
-	}
+	//if (window.location.href.indexOf("view=btop") > -1) {
+		//setTimeout(function(){ 
+			//insertMergeButton($("[aria-label='Message Body']"));
+		//},2500);
+		//_gaq.push(['_trackEvent','DOM','new_window_loaded']);
+	//}
 
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Message Body") {

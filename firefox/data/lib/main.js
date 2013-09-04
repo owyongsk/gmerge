@@ -10,11 +10,11 @@ $(document).ready(function() {
 	var fromDraft = false;
 	sessionStorage.debugger = "false";
 
-	if (window.location.href.indexOf("view=btop") > -1) {
-		setTimeout(function(){ 
-			insertMergeButton($("[aria-label='Attach files']"));
-		},2500);
-	}
+	//if (window.location.href.indexOf("view=btop") > -1) {
+		//setTimeout(function(){ 
+			//insertMergeButton($("[aria-label='Attach files']"));
+		//},2500);
+	//}
 
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Attach files") {
