@@ -91,7 +91,7 @@ $(document).ready(function() {
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
-				} else if (invalidToFormat) {
+				} else if (invalidToFormat(jQ)) {
 					modalError("Please make sure each recipient must be in this format: "
 										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
 					insertListener(jQ);
