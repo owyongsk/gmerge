@@ -98,7 +98,7 @@ $(document).ready(function() {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
 					_gaq.push(['_trackEvent','USER_ERROR','forgot_recipients']);
-				} else if (invalidToFormat) {
+				} else if (invalidToFormat(jQ)) {
 					modalError("Please make sure each recipient must be in this format: "
 										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
 					insertListener(jQ);
@@ -154,7 +154,7 @@ $(document).ready(function() {
 				} else if (data.status === "success") {
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
-					_gaq.push(['_trackEvent','USER','server_allow_gmerged']);
+					_gaq.push(['_trackEvent','SERVER','server_allow_gmerged']);
 				}
 			},
 			error: function(){
