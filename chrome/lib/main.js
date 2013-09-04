@@ -12,7 +12,7 @@ $(document).ready(function() {
 
 	if (window.location.href.indexOf("view=btop") > -1) {
 		setTimeout(function(){ 
-			insertMergeButton($("[aria-label='Compose reply']"));
+			insertMergeButton($("[aria-label='Message Body']"));
 		},2500);
 		_gaq.push(['_trackEvent','DOM','new_window_loaded']);
 	}
