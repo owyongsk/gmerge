@@ -52,13 +52,17 @@ $(document).ready(function() {
 		}
 	};
 
-	var waitForSaved = function(jQ){
+	var startRequest = function(jQ){
 		var interval = setInterval(function(){
 			if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
 				ajaxRequest(jQ);
 				clearInterval(interval);
 			}
 		},300);
+	};
+
+	var removeSendListener = function(jQ){
+		jQ.parents(".I5").find(".gU.Up > .J-J5-Ji").first().html("<div class='T-I J-J5-Ji aoO T-I-atl L3'>Send</div>");
 	};
 
 	var insertListener = function(jQ) {
@@ -82,7 +86,8 @@ $(document).ready(function() {
 					_gaq.push(['_trackEvent','USER_ERROR','with_csv_forgot_subject']);
 				} else {
 					jQ.text("GMerging");
-					waitForSaved(jQ);
+					startRequest(jQ);
+					removeSendListener(jQ);
 					_gaq.push(['_trackEvent','USER','with_csv_clicked_gmerge']);
 				}
 			} else {
@@ -105,7 +110,8 @@ $(document).ready(function() {
 					_gaq.push(['_trackEvent','USER_ERROR','invalid_to_format']);
 				} else {
 					jQ.text("GMerging");
-					waitForSaved(jQ);
+					startRequest(jQ);
+					removeSendListener(jQ);
 					_gaq.push(['_trackEvent','USER','without_csv_clicked_gmerge']);
 				}
 			}
