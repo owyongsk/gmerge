@@ -28,7 +28,7 @@ $(document).ready(function() {
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Message Body") {
 			insertMergeButton($(e.target));
-			_gaq.push(['_trackEvent','DOM','button_inserted']);
+			_gaq.push(['g._trackEvent','DOM','button_inserted']);
 		}
 	});
 
@@ -42,7 +42,7 @@ $(document).ready(function() {
 		setTimeout(function(){
 			if(typeof win.outerHeight ==="undefined" || parseInt(win.outerHeight, 10)<200) {
 				modalError('Seems like you have a popup blocker, click the popup blocked icon on the top right of the URL bar and click on the blue link "Authorization needed" and grant the authorization!');
-				_gaq.push(['_trackEvent','INFO','has_popup_blocker']);
+				_gaq.push(['g._trackEvent','INFO','has_popup_blocker']);
 			}
 		},4000);
 	};
@@ -69,6 +69,7 @@ $(document).ready(function() {
 		},300);
 		if (GMERGE_COUNTS_FOR_PROMPT.indexOf(parseInt(localStorage.gmergeCount)) >= 0){
 			askForRatings();
+			_gaq.push(['g._trackEvent','USER','seen_ask_for_ratings']);
 		}
 	};
 
@@ -86,7 +87,7 @@ $(document).ready(function() {
 					" you can just close it.</p>"+window.gmerge.debug,
 					null, "Debugging GMerge!");
 				insertListener(jQ);
-				_gaq.push(['_trackEvent','USER','debug_right_clicked']);
+				_gaq.push(['g._trackEvent','USER','debug_right_clicked']);
 				return;
 			}
 			var forgot = "Seems like you forgot your ";
@@ -94,36 +95,36 @@ $(document).ready(function() {
 				if (!getSubject(jQ)){
 					modalError(forgot + "subject");
 					insertListener(jQ);
-					_gaq.push(['_trackEvent','USER_ERROR','with_csv_forgot_subject']);
+					_gaq.push(['g._trackEvent','USER_ERROR','with_csv_forgot_subject']);
 				} else {
 					jQ.text("GMerging");
 					startRequest(jQ);
 					removeSendListener(jQ);
-					_gaq.push(['_trackEvent','USER','with_csv_clicked_gmerge']);
+					_gaq.push(['g._trackEvent','USER','with_csv_clicked_gmerge']);
 				}
 			} else {
 				if (!getSubject(jQ) && !getToLength(jQ)) {
 					modalError(forgot + "subject and recipients");
 					insertListener(jQ);
-					_gaq.push(['_trackEvent','USER_ERROR','forgot_subject_and_recipients']);
+					_gaq.push(['g._trackEvent','USER_ERROR','forgot_subject_and_recipients']);
 				} else if (!getSubject(jQ)) {
 					modalError(forgot + "subject");
 					insertListener(jQ);
-					_gaq.push(['_trackEvent','USER_ERROR','forgot_subject']);
+					_gaq.push(['g._trackEvent','USER_ERROR','forgot_subject']);
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
-					_gaq.push(['_trackEvent','USER_ERROR','forgot_recipients']);
+					_gaq.push(['g._trackEvent','USER_ERROR','forgot_recipients']);
 				} else if (invalidToFormat(jQ)) {
 					modalError("Please make sure each recipient must be in this format: "
 										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
 					insertListener(jQ);
-					_gaq.push(['_trackEvent','USER_ERROR','invalid_to_format']);
+					_gaq.push(['g._trackEvent','USER_ERROR','invalid_to_format']);
 				} else {
 					jQ.text("GMerging");
 					startRequest(jQ);
 					removeSendListener(jQ);
-					_gaq.push(['_trackEvent','USER','without_csv_clicked_gmerge']);
+					_gaq.push(['g._trackEvent','USER','without_csv_clicked_gmerge']);
 				}
 			}
 		});
@@ -167,12 +168,12 @@ $(document).ready(function() {
 					jQ.text("GMerge");
 					modalError(data.error_message, jQ);
 					insertListener(jQ);
-					_gaq.push(['_trackEvent','SERVER_ERROR','shit_happened']);
+					_gaq.push(['g._trackEvent','SERVER_ERROR','shit_happened']);
 					localStorage.gmergeFailedCount = parseInt(localStorage.gmergeFailedCount) + 1;
 				} else if (data.status === "success") {
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
-					_gaq.push(['_trackEvent','SERVER','server_allow_gmerged']);
+					_gaq.push(['g._trackEvent','SERVER','server_allow_gmerged']);
 					localStorage.gmergeCount = parseInt(localStorage.gmergeCount) + 1;
 				}
 			},
@@ -180,7 +181,7 @@ $(document).ready(function() {
 				newAuth();
 				jQ.text("GMerge");
 				insertListener(jQ);
-				_gaq.push(['_trackEvent','USER','new_auth']);
+				_gaq.push(['g._trackEvent','USER','new_auth']);
 			}
 		});
 	};
@@ -217,7 +218,7 @@ $(document).ready(function() {
 				$(nextButton.element).hide();
 				$(doneButton.element).show();
 				localStorage.GmergeSeenTutorial = true;
-				_gaq.push(['_trackEvent','USER','seen_tutorial']);
+				_gaq.push(['g._trackEvent','USER','seen_tutorial']);
 			}
 		};
 		this.add = function(message){
@@ -282,23 +283,26 @@ $(document).ready(function() {
 		}
 	};
 
-	var modalMessage = function(message, header) {
+	var askForRatings = function(){
+		var header  = "While waiting for your GMerge...";
+		var message = "Thank you very much for using GMerge. "+
+									"Seems like you have used GMerge a few times, "+
+									"can you give GMerge a rating or a review while waiting?";
 		dialog = new GMailUI.ModalDialog(header);
 		container = dialog.append(new GMailUI.ModalDialog.Container());
 		footer = dialog.append(new GMailUI.ModalDialog.Footer());
-		okButton = footer.append(new GMailUI.ModalDialog.Button("Okie","","cancel"));
+		var launch_store_link = function(){
+			var store = "https://chrome.google.com/webstore/detail/jhabibjfjplbkkljedkacnmngbobaphc/";
+			var win = window.open(store);
+			_gaq.push(['g._trackEvent','USER','launch_store_link']);
+			dialog.close();
+		};
+		sureButton = footer.append(new GMailUI.ModalDialog.Button("Sure!"));
+		sureButton.on('click', launch_store_link);
+		okButton = footer.append(new GMailUI.ModalDialog.Button("Maybe next time","","cancel"));
 		okButton.on('click', dialog.close);
 		container.append(message);
 		dialog.open();
-	};
-
-	var askForRatings = function(){
-		modalMessage("Thank you very much for using GMerge. "+
-								 "Seems like you have used GMerge a few times, "+
-								 "can you give GMerge a rating or a review at <a href='https"+
-								 "://chrome.google.com/webstore/detail/jhabibjfjplbkkljedkacn"+
-								 "mngbobaphc/'>my web store link?</a> while waiting",
-								 "While waiting for your GMerge...");
 	};
 
 	var modalError = function(message, debugJq, header) {
@@ -330,5 +334,5 @@ $(document).ready(function() {
 		modalTutorial.add("<p>Now go crazy and be much more flexible with the fields available!</p>"+imagePath("4"));
 		modalTutorial.start();
 	}
-	_gaq.push(['_trackEvent','DOM','script_loaded']);
+	_gaq.push(['g._trackEvent','DOM','script_loaded']);
 });

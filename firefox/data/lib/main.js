@@ -272,25 +272,26 @@ $(document).ready(function() {
 		}
 	};
 
-	var modalMessage = function(message, header) {
+	var askForRatings = function(){
+		var header  = "While waiting for your GMerge...";
+		var message = "Thank you very much for using GMerge. "+
+									"Seems like you have used GMerge a few times, "+
+									"can you give GMerge a rating or a review while waiting?";
 		dialog = new GMailUI.ModalDialog(header);
 		container = dialog.append(new GMailUI.ModalDialog.Container());
 		footer = dialog.append(new GMailUI.ModalDialog.Footer());
-		okButton = footer.append(new GMailUI.ModalDialog.Button("Okie","","cancel"));
+		var launch_store_link = function(){
+			var store = "https://addons.mozilla.org/en-US/firefox/addon/gmerge-alpha";
+			var win = window.open(store);
+			dialog.close();
+		};
+		sureButton = footer.append(new GMailUI.ModalDialog.Button("Sure!"));
+		sureButton.on('click', launch_store_link);
+		okButton = footer.append(new GMailUI.ModalDialog.Button("Maybe next time","","cancel"));
 		okButton.on('click', dialog.close);
 		container.append(message);
 		dialog.open();
 	};
-
-	var askForRatings = function(){
-		modalMessage("Thank you very much for using GMerge. "+
-								 "Seems like you have used GMerge a few times, "+
-								 "can you give GMerge a rating or a review at <a href='https"+
-								 "://addons.mozilla.org/en-US/firefox/addon/gmerge-alpha/"+
-								 "'>my firefox addon link?</a> while waiting",
-								 "While waiting for your GMerge...");
-	};
-
 
 	var modalError = function(message, debugJq, header) {
 		if (header) {
