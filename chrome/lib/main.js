@@ -292,7 +292,7 @@ $(document).ready(function() {
 		container = dialog.append(new GMailUI.ModalDialog.Container());
 		footer = dialog.append(new GMailUI.ModalDialog.Footer());
 		var launch_store_link = function(){
-			var store = "https://chrome.google.com/webstore/detail/jhabibjfjplbkkljedkacnmngbobaphc/";
+			var store = "https://chrome.google.com/webstore/detail/jhabibjfjplbkkljedkacnmngbobaphc/reviews";
 			var win = window.open(store);
 			_gaq.push(['g._trackEvent','USER','launch_store_link']);
 			dialog.close();
