@@ -107,10 +107,13 @@ $(document).ready(function() {
 				} else if (!getToLength(jQ)) {
 					modalError(forgot + "recipients");
 					insertListener(jQ);
+				} else if ((getToLength(jQ) <= 1) && ((getCcLength(jQ) > 2) || (getBccLength(jQ) > 2))) {
+					modalError("You must put all the recipients in the TO: field to GMerge");
+					insertListener(jQ);
 				} else if (invalidToFormat(jQ)) {
 					modalError("Please make sure each recipient must be in this format: "
 										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
-					insertListe
+					insertListener(jQ);
 				} else {
 					jQ.text("GMerging");
 					startRequest(jQ);
@@ -126,6 +129,14 @@ $(document).ready(function() {
 
 	var getToLength = function(jQ) {
 		return jQ.parents(".I5").find("input[name='to']").length;
+	};
+
+	var getCcLength = function(jQ) {
+		return jQ.parents(".I5").find("input[name='cc']").length;
+	};
+
+	var getBccLength = function(jQ) {
+		return jQ.parents(".I5").find("input[name='bcc']").length;
 	};
 
 	var getSubject = function(jQ) {
@@ -242,10 +253,6 @@ $(document).ready(function() {
 
 	var getAttachmentSizes = function(jQ){
 		return $.makeArray(jQ.parents(".I5").find(".vJ").map(function(){return this.innerHTML;}));
-	};
-
-	var getBccLength = function(jQ){
-		return jQ.parents(".I5").find("input[name='bcc']").length;
 	};
 
 	var saveDebugObject = function(debugJq){
