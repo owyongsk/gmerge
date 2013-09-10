@@ -9,6 +9,14 @@ $(document).ready(function() {
 	var composeCount = 0;
 	var fromDraft = false;
 	sessionStorage.debugger = "false";
+	var GMERGE_COUNTS_FOR_PROMPT = [5,50,500];
+
+	if (!localStorage.gmergeCount){
+		localStorage.gmergeCount = "0";
+	}
+	if (!localStorage.gmergeFailedCount){
+		localStorage.gmergeFailedCount = "0";
+	}
 
 	//if (window.location.href.indexOf("view=btop") > -1) {
 		//setTimeout(function(){ 
@@ -58,6 +66,9 @@ $(document).ready(function() {
 				clearInterval(interval);
 			}
 		},300);
+		if (GMERGE_COUNTS_FOR_PROMPT.indexOf(parseInt(localStorage.gmergeCount)) >= 0){
+			askForRatings();
+		}
 	};
 
 	var removeSendListener = function(jQ){
@@ -149,9 +160,11 @@ $(document).ready(function() {
 			jQ.text("GMerge");
 			modalError(data.response.error_message, jQ);
 			insertListener(jQ);
+			localStorage.gmergeFailedCount = parseInt(localStorage.gmergeFailedCount) + 1;
 		} else if (data.response.status === "success") {
 			jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 			$(".vh").first().text("You have GMerged like a boss! You have "+data.response.quota_left+" GMerge emails left today!");
+			localStorage.gmergeCount = parseInt(localStorage.gmergeCount) + 1;
 		}
 	});
 
@@ -252,10 +265,32 @@ $(document).ready(function() {
 				composeCount: composeCount,
 				seenTutorial: localStorage.GmergeSeenTutorial,
 				gmergePath: localStorage.gmergePath,
+				gmergeCount: localStorage.gmergeCount,
+				gmergeFailedCount: localStorage.gmergeFailedCount,
 				location: window.top.location.href
 			}, undefined, 2).replace(/</g, "&lt;").replace(/>/g, "&gt;");
 		}
 	};
+
+	var modalMessage = function(message, header) {
+		dialog = new GMailUI.ModalDialog(header);
+		container = dialog.append(new GMailUI.ModalDialog.Container());
+		footer = dialog.append(new GMailUI.ModalDialog.Footer());
+		okButton = footer.append(new GMailUI.ModalDialog.Button("Okie","","cancel"));
+		okButton.on('click', dialog.close);
+		container.append(message);
+		dialog.open();
+	};
+
+	var askForRatings = function(){
+		modalMessage("Thank you very much for using GMerge. "+
+								 "Seems like you have used GMerge a few times, "+
+								 "can you give GMerge a rating or a review at <a href='https"+
+								 "://addons.mozilla.org/en-US/firefox/addon/gmerge-alpha/"+
+								 "'>my firefox addon link?</a> while waiting",
+								 "While waiting for your GMerge...");
+	};
+
 
 	var modalError = function(message, debugJq, header) {
 		if (header) {
