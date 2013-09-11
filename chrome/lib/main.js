@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
 	jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
 			return function( elem ) {
 					return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
@@ -22,13 +22,11 @@ $(document).ready(function() {
 		//setTimeout(function(){ 
 			//insertMergeButton($("[aria-label='Message Body']"));
 		//},2500);
-		//_gaq.push(['_trackEvent','DOM','new_window_loaded']);
 	//}
 
 	$(document).on('DOMNodeInserted', function(e) {
 		if ($(e.target).attr("aria-label") === "Message Body") {
 			insertMergeButton($(e.target));
-			_gaq.push(['g._trackEvent','DOM','button_inserted']);
 		}
 	});
 
@@ -343,5 +341,4 @@ $(document).ready(function() {
 		modalTutorial.add("<p>Now go crazy and be much more flexible with the fields available!</p>"+imagePath("4"));
 		modalTutorial.start();
 	}
-	_gaq.push(['g._trackEvent','DOM','script_loaded']);
-});
+})();
