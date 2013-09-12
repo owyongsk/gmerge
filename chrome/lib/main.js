@@ -180,10 +180,15 @@
 					insertListener(jQ);
 					_gaq.push(['g._trackEvent','SERVER_ERROR','shit_happened']);
 					localStorage.gmergeFailedCount = parseInt(localStorage.gmergeFailedCount) + 1;
+				} else if (data.status === "user_error") {
+					jQ.text("GMerge");
+					modalError(data.error_message);
+					insertListener(jQ);
+					_gaq.push(['g._trackEvent','USER_ERROR','bad_csv_format']);
 				} else if (data.status === "success") {
+					_gaq.push(['g._trackEvent','SERVER','server_allow_gmerged','',getToLength(jQ)]);
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
-					_gaq.push(['g._trackEvent','SERVER','server_allow_gmerged']);
 					localStorage.gmergeCount = parseInt(localStorage.gmergeCount) + 1;
 				}
 			},
@@ -292,9 +297,10 @@
 
 	var askForRatings = function(){
 		var header  = "While waiting for your GMerge...";
-		var message = "Thank you very much for using GMerge. "+
-									"Seems like you have used GMerge a few times, "+
-									"can you give GMerge a rating or a review while waiting?";
+		var message = "Thank you very much for using GMerge.<br><br>"+
+									"My goal is to get many people to use GMerge since it's free. "+
+									"And it seems like you have used GMerge a few times, "+
+									"can you give GMerge a rating while waiting? Please?";
 		dialog = new GMailUI.ModalDialog(header);
 		container = dialog.append(new GMailUI.ModalDialog.Container());
 		footer = dialog.append(new GMailUI.ModalDialog.Footer());
@@ -337,7 +343,7 @@
 		modalTutorial.add("<p>Thanks for being awesome by downloading GMerge Alpha now with a new feature for uploading CSV for more advanced merge! The first time you click the GMerge button, it will take a few seconds and there will be a popup asking for your authorization.</p>");
 		modalTutorial.add("<p>The simplest way to GMerge is by entering contacts in your <b>To:</b> field as normal. You must use your regular contacts with names or something with this 'Bob Loblaw &#60;bob@loblaw.com&#62;' format.</p>"+imagePath("1"));
 		modalTutorial.add("<p>Now type [First Name], [Last Name], [Full Name], or [Email] anywhere in the Subject or Body of the message and press the GMerge button.</p>"+imagePath("2"));
-		modalTutorial.add("<p>Or you can upload a CSV attachment named gmerge.csv with the email fields such as the one below! If you use this option, the <b>To:</b> field will not be used in the merge.</p>"+imagePath("3"));
+		modalTutorial.add("<p>Or you can upload a CSV attachment named gmerge.csv (<a href='https://dl.dropboxusercontent.com/u/3391326/gmerge.csv'>sample</a>) with the email fields such as the one below! If you use this option, the <b>To:</b> field will not be used in the merge.</p>"+imagePath("3"));
 		modalTutorial.add("<p>Now go crazy and be much more flexible with the fields available!</p>"+imagePath("4"));
 		modalTutorial.start();
 	}
