@@ -25,6 +25,9 @@
 	//}
 
 	$(document).on('DOMNodeInserted', function(e) {
+		if (window.location.href.indexOf("mailto") > -1) {
+			return;
+		}
 		if ($(e.target).attr("aria-label") === "Attach files") {
 			insertMergeButton($(e.target));
 		}

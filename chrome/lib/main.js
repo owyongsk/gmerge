@@ -1,8 +1,8 @@
 (function() {
 	jQuery.expr[":"].Contains = jQuery.expr.createPseudo(function(arg) {
-			return function( elem ) {
-					return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
-			};
+		return function( elem ) {
+			return jQuery(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+		};
 	});
 
 	var URL = "https://script.google.com/macros/s/AKfycbxRSJAFYDdb_Mv1kvof7e6eOb3D2lOE_pjLbzumz3kohDM8pE08/exec";
@@ -19,12 +19,15 @@
 	}
 
 	//if (window.location.href.indexOf("view=btop") > -1) {
-		//setTimeout(function(){ 
-			//insertMergeButton($("[aria-label='Message Body']"));
-		//},2500);
+	//setTimeout(function(){ 
+	//insertMergeButton($("[aria-label='Message Body']"));
+	//},2500);
 	//}
 
 	$(document).on('DOMNodeInserted', function(e) {
+		if (window.location.href.indexOf("mailto") > -1) {
+			return;
+		}
 		if ($(e.target).attr("aria-label") === "Message Body") {
 			insertMergeButton($(e.target));
 		}
@@ -119,7 +122,7 @@
 					g_ga('send','event','USER_ERROR','not_using_to_field');
 				} else if (invalidToFormat(jQ)) {
 					modalError("Please make sure each recipient must be in this format: "
-										+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
+							+"<br />Chris Hadfield &lt;chris.hadfield@gmail.com&gt;");
 					insertListener(jQ);
 					g_ga('send','event','USER_ERROR','invalid_to_format');
 				} else {
@@ -348,4 +351,3 @@
 		modalTutorial.start();
 	}
 })();
-alert("script_loaded");
