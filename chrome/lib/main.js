@@ -25,7 +25,8 @@
 	//}
 
 	$(document).on('DOMNodeInserted', function(e) {
-		if (window.location.href.indexOf("mailto") > -1) {
+		if (window.location.href.indexOf("mailto") > -1 || 
+				$(e.target).parents("[role='presentation']")[0]) {
 			return;
 		}
 		if ($(e.target).attr("aria-label") === "Message Body") {
