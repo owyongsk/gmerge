@@ -9,7 +9,6 @@
 	var composeCount = 0;
 	var fromDraft = false;
 	window.gmerge = {debugger: "false"};
-	var GMERGE_COUNTS_FOR_PROMPT = [5,50,500];
 
 	if (!localStorage.gmergeCount){
 		localStorage.gmergeCount = "0";
@@ -71,9 +70,10 @@
 			}
 			count++;
 		},300);
-		if (GMERGE_COUNTS_FOR_PROMPT.indexOf(parseInt(localStorage.gmergeCount)) >= 0){
-			askForRatings();
-			g_ga('send','event','USER','seen_ask_for_ratings');
+		var gc = parseInt(localStorage.gmergeCount);
+		if (gc === 5 || gc % 30 === 0){
+			askForRatingsOrReferrals();
+			g_ga('send','event','USER','seen_ask_for_ratings_or_referrals');
 		}
 	};
 
@@ -193,10 +193,8 @@
 					g_ga('send','event','USER_ERROR','bad_csv_format');
 				} else if (data.status === "success") {
 					if (data.csv_recipients === "null") {
-						alert("NO CSV");
 						g_ga('send','event','SERVER','server_allow_gmerged','',getToLength(jQ));
 					} else {
-						alert(data.csv_recipients);
 						g_ga('send','event','SERVER','server_allow_csv_gmerged','',data.csv_recipients);
 					}
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
@@ -307,24 +305,42 @@
 		}
 	};
 
-	var askForRatings = function(){
+	var store = "https://chrome.google.com/webstore/detail/jhabibjfjplbkkljedkacnmngbobaphc";
+
+	var askForRatingsOrReferrals = function(){
 		var header  = "While waiting for your GMerge...";
 		var message = "Thank you very much for using GMerge.<br><br>"+
-									"My goal is to get many people to use GMerge since it's free. "+
-									"And it seems like you have used GMerge a few times, "+
-									"can you give GMerge a rating while waiting? Please?";
+			"I built GMerge as a labor of love so it could help others. "+
+			"And it seems like you have used GMerge a few times, "+
+			"I would really appreciate it if you could tell others "+
+			"about GMerge or rate and review us at the Web Store. Please?";
 		dialog = new GMailUI.ModalDialog(header);
 		container = dialog.append(new GMailUI.ModalDialog.Container());
 		footer = dialog.append(new GMailUI.ModalDialog.Footer());
 		var launch_store_link = function(){
-			var store = "https://chrome.google.com/webstore/detail/jhabibjfjplbkkljedkacnmngbobaphc/reviews";
-			var win = window.open(store);
-			g_ga('send','event','USER','launch_store_link');
+			var reviews = store + "/reviews";
+			var win = window.open(reviews);
 			dialog.close();
+			g_ga('send','event','USER','launch_store_link');
 		};
-		sureButton = footer.append(new GMailUI.ModalDialog.Button("Sure!"));
-		sureButton.on('click', launch_store_link);
-		okButton = footer.append(new GMailUI.ModalDialog.Button("Maybe next time","","cancel"));
+		var tell_others = function(){
+			var number_of_compose_windows = $("[id*='btn-merge']").length;
+			window.location.href += "?compose=new";
+			var interval = setInterval(function(){
+				if($("[id*='btn-merge']").length > number_of_compose_windows){
+					$("input[name='subjectbox']").last().val("Check out this Chrome extension I've been using");
+					$(".Am.Al.editable.LW-avf").last().prepend("Hey [First Name]<br><br>I've been using this Chrome extension that lets you mail merge (or send multiple personalized emails) on top of Gmail, thought it might suit your workflow. Check out <a href='"+store+"'>GMerge</a>.<br>");
+					clearInterval(interval);
+				}
+			},300);
+			dialog.close();
+			g_ga('send','event','USER','launch_tell_others');
+		};
+		storeButton = footer.append(new GMailUI.ModalDialog.Button("Rate & Review"));
+		storeButton.on('click', launch_store_link);
+		tellButton = footer.append(new GMailUI.ModalDialog.Button("Tell Others"));
+		tellButton.on('click', tell_others);
+		okButton = footer.append(new GMailUI.ModalDialog.Button("Maybe next time :(","","cancel"));
 		okButton.on('click', dialog.close);
 		container.append(message);
 		dialog.open();
