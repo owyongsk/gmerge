@@ -63,11 +63,13 @@
 	};
 
 	var startRequest = function(jQ){
+		var count = 0;
 		var interval = setInterval(function(){
-			if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved"){
+			if(jQ.parents(".n1tfz").find(".oG.aOy").first().text() === "Saved" || count === 30){
 				ajaxRequest(jQ);
 				clearInterval(interval);
 			}
+			count++;
 		},300);
 		if (GMERGE_COUNTS_FOR_PROMPT.indexOf(parseInt(localStorage.gmergeCount)) >= 0){
 			askForRatings();
