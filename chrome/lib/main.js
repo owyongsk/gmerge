@@ -190,7 +190,13 @@
 					insertListener(jQ);
 					g_ga('send','event','USER_ERROR','bad_csv_format');
 				} else if (data.status === "success") {
-					g_ga('send','event','SERVER','server_allow_gmerged','',getToLength(jQ));
+					if (data.csv_recipients === "null") {
+						alert("NO CSV");
+						g_ga('send','event','SERVER','server_allow_gmerged','',getToLength(jQ));
+					} else {
+						alert(data.csv_recipients);
+						g_ga('send','event','SERVER','server_allow_csv_gmerged','',data.csv_recipients);
+					}
 					jQ.parents(".aDh").find('[role="button"][aria-label="Discard draft"]').click();
 					$(".vh").first().text("You have GMerged like a boss! You have "+data.quota_left+" GMerge emails left today!");
 					localStorage.gmergeCount = parseInt(localStorage.gmergeCount) + 1;
