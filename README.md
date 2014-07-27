@@ -6,6 +6,7 @@ A chrome add-on on top Gmail to help you easily mail merge. Download it
 1. Tests
 2. Refactor into smaller files
 3. Fix issues of bugs on some people's Gmail
+4. More documentation on the code, oh gawd this was such a hack project
 
 # THE BEERWARE LICENSE
 
