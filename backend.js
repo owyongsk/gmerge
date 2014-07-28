@@ -19,7 +19,6 @@ function test(){
   //var csv = findGmergeCSV(m.getAttachments());
   //csv = Utilities.parseCsv(csv.getDataAsString());
   //Logger.log(csv);
-  //Logger.log("SK San (PSP HEALTHCARE) <skowyong@yahoo.com>".match(NAME_REGEX));
   Logger.log(m.getTo().replace(/"/gi,""));
 }
 
@@ -65,7 +64,7 @@ function doGet(req) {
       else if (err === "bad csv")
         var json = JSON.stringify({ status: "user_error", error_message: "Your CSV file is invalid. Take a look at a sample CSV file <a href='https://dl.dropboxusercontent.com/u/3391326/gmerge.csv'>here</a> and start from there!" });
       else
-        var json = JSON.stringify({ status: "failed", error_message: JSON.stringify(err) + "<br><br><p>Please copy this error message and email dude@owyong.sk so he can try and fix this. He swears on his unborn grandchildren's tears to take a look at this.</p>" });
+        var json = JSON.stringify({ status: "failed", error_message: JSON.stringify(err) + "<br><br><p>If this error kept happening, please try this alternative solution <a href='www.labnol.org/internet/personalized-mail-merge-in-gmail/20981/#free'>here</a>.</p><br><br><p>Please copy this error message and email dude@owyong.sk so he can try and fix this. He swears on his unborn grandchildren's tears to take a look at this.</p>" });
     }
     // jsonp for chrome, json for firefox
     if (req.parameters.callback === undefined)
